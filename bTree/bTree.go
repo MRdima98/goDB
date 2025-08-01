@@ -2,6 +2,7 @@ package btree
 
 import (
 	"errors"
+	"slices"
 )
 
 const nrKeys = 16
@@ -12,11 +13,13 @@ type bTree struct {
 	indexZeroUsed bool
 }
 
-// TODO: Push an index in the root. Keep track of the index 0 if it's in the tree.
-func (r *bTree) pushIndex(index int) error {
-	for el, i := range r.indexes {
+func (r *bTree) insertIndex(index int) error {
+	for i, el := range r.indexes {
 		if el == 0 {
 			r.indexes[i] = index
+			arr := r.indexes[:]
+			slices.Sort(arr)
+			r.indexes = [16]int(arr)
 			return nil
 		}
 	}
