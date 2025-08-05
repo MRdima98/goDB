@@ -6,7 +6,8 @@ import (
 	"testing"
 )
 
-const biggestIndex = 100
+const maxIndex = 100
+const minIndex = 0
 
 func TestInsertOneIndex(t *testing.T) {
 	tree := &bTree{}
@@ -56,21 +57,29 @@ func TestOverflowShouldCreateNewNodeIfRoot(t *testing.T) {
 
 func TestExtraKeysShouldGoToChildren(t *testing.T) {
 	tree, expected := oneDepthTree(17)
-	tree.insertIndex(biggestIndex + 1)
-	expected = append(expected, biggestIndex+1)
-	root := []int{expected[8]}
-	// left_son := expected[:7]
-	// middle_son := expected[9:16]
-	// right_son := expected[18:]
-	// t.Log(root, left_son, middle_son, right_son)
-	t.Log(tree.indexes)
-	t.Log(tree.children[0])
-	t.Log(tree.children[1])
+	tree.insertIndex(maxIndex + 1)
+	tree.insertIndex(minIndex)
+	expected = append(expected, maxIndex+1)
+	expected = append([]int{minIndex}, expected...)
+	expected_root := []int{expected[9]}
+	expected_left_son := expected[:8]
+	expected_right_son := expected[10:]
 
-	if !slices.Equal(root, tree.indexes) {
+	if !slices.Equal(expected_root, tree.indexes) {
 		t.Errorf(`Expected array: %v
-		 got instead: %v`, root, tree.indexes)
+		 got instead: %v`, expected_root, tree.indexes)
 	}
+
+	if !slices.Equal(expected_left_son, tree.children[0].indexes) {
+		t.Errorf(`Expected array: %v
+		 got instead: %v`, expected_left_son, tree.children[0].indexes)
+	}
+
+	if !slices.Equal(expected_right_son, tree.children[1].indexes) {
+		t.Errorf(`Expected array: %v
+		 got instead: %v`, expected_right_son, tree.children[1].indexes)
+	}
+
 }
 
 func oneDepthTree(nodes_num int) (bTree, []int) {
@@ -78,7 +87,7 @@ func oneDepthTree(nodes_num int) (bTree, []int) {
 	expected := []int{}
 	var tmp int
 	for range nodes_num {
-		tmp = rand.Intn(100)
+		tmp = rand.Intn(maxIndex)
 		tree.insertIndex(tmp)
 		expected = append(expected, tmp)
 	}

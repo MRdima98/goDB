@@ -15,10 +15,20 @@ type bTree struct {
 
 func (r *bTree) insertIndex(index int) error {
 	last_elem := len(r.indexes) - 1
-	if len(r.indexes) > 0 && index > r.indexes[last_elem] && len(r.children) > last_elem {
-		log.Println(index)
-		r.children[last_elem+1].insertIndex(index)
-		return nil
+	childrens := len(r.children) > 0
+	indexes := len(r.indexes) > 0
+	if childrens && indexes {
+		if index > r.indexes[last_elem] {
+			log.Println(index)
+			r.children[last_elem+1].insertIndex(index)
+			return nil
+		}
+
+		if index < r.indexes[0] {
+			log.Println("left")
+			r.children[0].insertIndex(index)
+			return nil
+		}
 	}
 
 	if len(r.indexes) < maxKeysPerNode {
