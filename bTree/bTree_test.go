@@ -8,6 +8,8 @@ import (
 
 const maxIndex = 100
 const minIndex = 0
+const twoChildren = 17
+const threeChildren = 26
 
 func TestInsertOneIndex(t *testing.T) {
 	tree := &bTree{}
@@ -31,7 +33,7 @@ func TestNodePreservesOrder(t *testing.T) {
 }
 
 func TestOverflowShouldCreateNewNodeIfRoot(t *testing.T) {
-	tree, expected := oneDepthTree(15)
+	tree, expected := genTree(15)
 	tree.insertIndex(0)
 	tree.insertIndex(1)
 	expected = append(expected, 0)
@@ -56,7 +58,7 @@ func TestOverflowShouldCreateNewNodeIfRoot(t *testing.T) {
 }
 
 func TestExtraKeysShouldGoToChildren(t *testing.T) {
-	tree, expected := oneDepthTree(17)
+	tree, expected := genTree(twoChildren)
 	tree.insertIndex(maxIndex + 1)
 	tree.insertIndex(minIndex)
 	expected = append(expected, maxIndex+1)
@@ -82,7 +84,22 @@ func TestExtraKeysShouldGoToChildren(t *testing.T) {
 
 }
 
-func oneDepthTree(nodes_num int) (bTree, []int) {
+// TODO: right now it splits in half and makes a new root so everything is messed up
+// fix and split it into brothers
+func TestSibilingsSplit(t *testing.T) {
+	tree, expected := genTree(twoChildren)
+	tmp := 0
+	for range 9 {
+		tmp = maxIndex + rand.Intn(maxIndex)
+		tree.insertIndex(tmp)
+		expected = append(expected, tmp)
+	}
+	t.Log("Expected: ", expected)
+	t.Log("Tree")
+	printTree(tree)
+}
+
+func genTree(nodes_num int) (bTree, []int) {
 	tree := &bTree{}
 	expected := []int{}
 	var tmp int

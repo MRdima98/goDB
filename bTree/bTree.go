@@ -2,6 +2,7 @@ package btree
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"slices"
 )
@@ -11,6 +12,7 @@ const maxKeysPerNode = 16
 type bTree struct {
 	indexes  []int
 	children []*bTree
+	father   *bTree
 }
 
 func (r *bTree) insertIndex(index int) error {
@@ -19,13 +21,11 @@ func (r *bTree) insertIndex(index int) error {
 	indexes := len(r.indexes) > 0
 	if childrens && indexes {
 		if index > r.indexes[last_elem] {
-			log.Println(index)
 			r.children[last_elem+1].insertIndex(index)
 			return nil
 		}
 
 		if index < r.indexes[0] {
-			log.Println("left")
 			r.children[0].insertIndex(index)
 			return nil
 		}
@@ -38,6 +38,7 @@ func (r *bTree) insertIndex(index int) error {
 	}
 
 	if len(r.indexes) >= maxKeysPerNode {
+		log.Println("split")
 		r.indexes = append(r.indexes, index)
 		slices.Sort(r.indexes)
 		lenth := len(r.indexes)
@@ -45,11 +46,20 @@ func (r *bTree) insertIndex(index int) error {
 		right_node := r.indexes[lenth/2+1:]
 		tree := &bTree{}
 		tree.indexes = []int{r.indexes[lenth/2]}
-		tree.children = append(tree.children, &bTree{indexes: left_node})
-		tree.children = append(tree.children, &bTree{indexes: right_node})
+		tree.children = append(tree.children, &bTree{indexes: left_node, father: tree})
+		tree.children = append(tree.children, &bTree{indexes: right_node, father: tree})
 		*r = *tree
 		return nil
 	}
 
 	return errors.New("No space")
+}
+
+// TODO: I would rather it be in order. However I'm not sure at the moment how
+// to approach it
+func printTree(root bTree) {
+	for _, el := range root.children {
+		printTree(*el)
+	}
+	fmt.Println(root.indexes, len(root.indexes))
 }
