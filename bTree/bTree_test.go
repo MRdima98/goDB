@@ -1,6 +1,7 @@
 package btree
 
 import (
+	"fmt"
 	"math/rand"
 	"slices"
 	"testing"
@@ -94,8 +95,8 @@ func TestSibilingsSplit(t *testing.T) {
 		tree.insertIndex(tmp)
 		expected = append(expected, tmp)
 	}
-	t.Log("Expected: ", expected)
-	t.Log("Tree")
+	// t.Log("Expected: ", expected)
+	fmt.Println(tree.children[0])
 	printTree(tree)
 }
 
