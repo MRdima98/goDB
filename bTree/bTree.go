@@ -8,6 +8,7 @@ import (
 
 const maxKeysPerNode = 16
 
+// TODO: No father, instead try doing iteractevly
 type bTree struct {
 	indexes  []int
 	children []*bTree
@@ -41,7 +42,7 @@ func (r *bTree) insertIndex(index int) error {
 		// left_node := r.indexes[:lenth/2-1]
 		// right_node := r.indexes[lenth/2+1:]
 		r.father.indexes = append(r.father.indexes, r.indexes[lenth/2])
-		fmt.Println(r)
+		fmt.Println(r.father.indexes, &r.father)
 		fmt.Println(r.father.indexes, &r.father)
 
 		// slices.Sort(r.father.indexes)
