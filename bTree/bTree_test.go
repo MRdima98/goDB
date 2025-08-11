@@ -84,6 +84,8 @@ func TestExtraKeysShouldGoToChildren(t *testing.T) {
 
 // TODO: right now it splits in half and makes a new root so everything is messed up
 // fix and split it into brothers
+// UPDATE: removed the concept of father and added new logic for children to split.
+// doesn't work but I will keep hammering tomorrow
 func TestSibilingsSplit(t *testing.T) {
 	tree, expected := genTree(twoChildren)
 	tmp := 0
