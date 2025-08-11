@@ -34,11 +34,9 @@ func TestNodePreservesOrder(t *testing.T) {
 }
 
 func TestOverflowShouldCreateNewNodeIfRoot(t *testing.T) {
-	tree, expected := genTree(15)
+	tree, expected := genTree(16)
 	tree.insertIndex(0)
-	tree.insertIndex(1)
 	expected = append(expected, 0)
-	expected = append(expected, 1)
 	slices.Sort(expected)
 	middle := 17 / 2
 
@@ -47,7 +45,7 @@ func TestOverflowShouldCreateNewNodeIfRoot(t *testing.T) {
 		 got instead: %v`, expected[middle], tree.indexes[0])
 	}
 
-	if !slices.Equal(expected[:middle-1], tree.children[0].indexes) {
+	if !slices.Equal(expected[:middle], tree.children[0].indexes) {
 		t.Errorf(`Expected array: %v
 		 got instead: %v`, expected[:middle], tree.children[0].indexes)
 	}
