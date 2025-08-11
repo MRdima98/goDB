@@ -35,24 +35,23 @@ func TestNodePreservesOrder(t *testing.T) {
 
 func TestOverflowShouldCreateNewNodeIfRoot(t *testing.T) {
 	tree, expected := genTree(16)
-	tree.insertIndex(0)
-	expected = append(expected, 0)
+	tree.insertIndex(minIndex)
+	expected = append(expected, minIndex)
 	slices.Sort(expected)
-	middle := 17 / 2
 
-	if expected[middle] != tree.indexes[0] {
+	if expected[midKey] != tree.indexes[0] {
 		t.Errorf(`Expected array: %v
-		 got instead: %v`, expected[middle], tree.indexes[0])
+		 got instead: %v`, expected[midKey], tree.indexes[0])
 	}
 
-	if !slices.Equal(expected[:middle], tree.children[0].indexes) {
+	if !slices.Equal(expected[:midKey], tree.children[0].indexes) {
 		t.Errorf(`Expected array: %v
-		 got instead: %v`, expected[:middle], tree.children[0].indexes)
+		 got instead: %v`, expected[:midKey], tree.children[0].indexes)
 	}
 
-	if !slices.Equal(expected[middle+1:], tree.children[1].indexes) {
+	if !slices.Equal(expected[midKey+1:], tree.children[1].indexes) {
 		t.Errorf(`Expected array: %v
-		 got instead: %v`, expected[middle+1:], tree.children[1].indexes)
+		 got instead: %v`, expected[midKey+1:], tree.children[1].indexes)
 	}
 }
 
@@ -63,7 +62,7 @@ func TestExtraKeysShouldGoToChildren(t *testing.T) {
 	expected = append(expected, maxIndex+1)
 	expected = append([]int{minIndex}, expected...)
 	expected_root := []int{expected[9]}
-	expected_left_son := expected[:8]
+	expected_left_son := expected[:9]
 	expected_right_son := expected[10:]
 
 	if !slices.Equal(expected_root, tree.indexes) {
