@@ -1,7 +1,6 @@
 package btree
 
 import (
-	"fmt"
 	"math/rand"
 	"slices"
 	"testing"
@@ -82,10 +81,6 @@ func TestExtraKeysShouldGoToChildren(t *testing.T) {
 
 }
 
-// TODO: right now it splits in half and makes a new root so everything is messed up
-// fix and split it into brothers
-// UPDATE: removed the concept of father and added new logic for children to split.
-// doesn't work but I will keep hammering tomorrow
 func TestSibilingsSplit(t *testing.T) {
 	tree, expected := genTree(twoChildren)
 	tmp := 0
@@ -94,9 +89,33 @@ func TestSibilingsSplit(t *testing.T) {
 		tree.insertIndex(tmp)
 		expected = append(expected, tmp)
 	}
-	// t.Log("Expected: ", expected)
-	fmt.Println(tree.children[0])
-	printTree(tree)
+	slices.Sort(expected)
+	left_node := expected[:midKey]
+	center_node := expected[midKey+1 : (midKey*2 + 1)]
+	right_node := expected[len(expected)-midKey:]
+	var root []int
+	root = append(root, expected[midKey])
+	root = append(root, expected[midKey*2+1])
+
+	if !slices.Equal(left_node, tree.children[0].indexes) {
+		t.Errorf(`Expected left child: %v
+		 got instead: %v`, left_node, tree.children[0].indexes)
+	}
+
+	if !slices.Equal(center_node, tree.children[1].indexes) {
+		t.Errorf(`Expected center child: %v
+		 got instead: %v`, center_node, tree.children[1].indexes)
+	}
+
+	if !slices.Equal(right_node, tree.children[2].indexes) {
+		t.Errorf(`Expected right child: %v
+		 got instead: %v`, right_node, tree.children[2].indexes)
+	}
+
+	if !slices.Equal(root, tree.indexes) {
+		t.Errorf(`Expected root: %v
+		 got instead: %v`, root, tree.indexes)
+	}
 }
 
 func genTree(nodes_num int) (bTree, []int) {

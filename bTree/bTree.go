@@ -73,10 +73,10 @@ func splitRoot(root *bTree, index int) *bTree {
 func splitChild(node *bTree, index int, i int) {
 	overflown_node := node.children[i].indexes
 	overflown_node = append(overflown_node, index)
-	ov_len := len(overflown_node)
-	left_node := overflown_node[:ov_len/2-1]
-	middle := overflown_node[ov_len/2]
-	right_node := node.indexes[ov_len/2+1:]
+	slices.Sort(overflown_node)
+	left_node := overflown_node[:midKey]
+	middle := overflown_node[midKey]
+	right_node := overflown_node[midKey+1:]
 	node.indexes = append(node.indexes, middle)
 	slices.Sort(node.indexes)
 	node.children[i].indexes = left_node
