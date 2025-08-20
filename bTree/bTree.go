@@ -56,6 +56,8 @@ func printTree(root bTree) {
 	}
 }
 
+// TODO: This does split current children BUT I need the ability to also split
+// the childrens children! Which might be annoying
 func splitRoot(root *bTree, index int) *bTree {
 	root.indexes = append(root.indexes, index)
 	slices.Sort(root.indexes)

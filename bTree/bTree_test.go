@@ -6,10 +6,11 @@ import (
 	"testing"
 )
 
-const maxIndex = 100
+const maxIndex = 10000
 const minIndex = 0
-const twoChildren = 17
+const twoChildren = 16 + 1
 const threeChildren = 26
+const twoLevelTree = 16*(8+1) + 1
 
 func TestInsertOneIndex(t *testing.T) {
 	tree := &bTree{}
@@ -115,6 +116,21 @@ func TestSibilingsSplit(t *testing.T) {
 	if !slices.Equal(root, tree.indexes) {
 		t.Errorf(`Expected root: %v
 		 got instead: %v`, root, tree.indexes)
+	}
+
+}
+
+func TestRootSplitByChildrenOverflow(t *testing.T) {
+	tree := &bTree{}
+	for {
+		if len(tree.children) != 0 {
+			if len(tree.indexes) == 1 && len(tree.children[0].indexes) == 4 {
+				break
+			}
+		}
+		tree.insertIndex(rand.Intn(maxIndex))
+		t.Log("INSERT")
+		printTree(*tree)
 	}
 }
 
