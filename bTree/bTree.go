@@ -64,6 +64,11 @@ func splitRoot(root *bTree, index int) *bTree {
 	left_child := &bTree{indexes: root.indexes[:midKey]}
 	right_child := &bTree{indexes: root.indexes[midKey+1:]}
 
+	if len(root.children) > 0 {
+		left_child.children = root.children[:midKey]
+		right_child.children = root.children[midKey+1:]
+	}
+
 	tree := &bTree{
 		indexes:  []int{root.indexes[midKey]},
 		children: []*bTree{left_child, right_child},
@@ -79,8 +84,6 @@ func splitChild(node *bTree, index int, i int) {
 	left_node := overflown_node[:midKey]
 	middle := overflown_node[midKey]
 	right_node := overflown_node[midKey+1:]
-	node.indexes = append(node.indexes, middle)
-	slices.Sort(node.indexes)
 	node.children[i].indexes = left_node
 	node.children = append(node.children, &bTree{indexes: right_node})
 	var tmp = map[int]*bTree{}
@@ -94,5 +97,13 @@ func splitChild(node *bTree, index int, i int) {
 	slices.Sort(tmp2)
 	for i, k := range tmp2 {
 		node.children[i] = tmp[k]
+	}
+
+	if (len(node.indexes)) >= maxKeysPerNode {
+		new_tree := splitRoot(node, index)
+		*node = *new_tree
+	} else {
+		node.indexes = append(node.indexes, middle)
+		slices.Sort(node.indexes)
 	}
 }

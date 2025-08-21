@@ -122,15 +122,32 @@ func TestSibilingsSplit(t *testing.T) {
 
 func TestRootSplitByChildrenOverflow(t *testing.T) {
 	tree := &bTree{}
-	for {
-		if len(tree.children) != 0 {
-			if len(tree.indexes) == 1 && len(tree.children[0].indexes) == 4 {
-				break
-			}
-		}
-		tree.insertIndex(rand.Intn(maxIndex))
-		t.Log("INSERT")
-		printTree(*tree)
+	threeLevelTree := 161
+	for i := range threeLevelTree {
+		tree.insertIndex(i)
+	}
+
+	if tree.indexes[0] != threeLevelTree/2 {
+		t.Errorf(`Expected root: %v
+		 got instead: %v`, threeLevelTree/2, tree.indexes[0])
+	}
+
+	if len(tree.children) != 2 {
+		t.Errorf(`Expected %v children, 
+		 got instead: %v`, 2, len(tree.children))
+	}
+
+	expected_children := 8
+	left_child := tree.children[0].children
+	if len(left_child) != expected_children {
+		t.Errorf(`Expected left child to have %v children, 
+			got instead: %v! Child-> %v`, expected_children, len(left_child), left_child)
+	}
+
+	right_child := tree.children[1].children
+	if len(right_child) != expected_children+1 {
+		t.Errorf(`Expected right child to have %v children, 
+		 instead %v! Child -> %v`, expected_children+1, len(right_child), right_child)
 	}
 }
 
