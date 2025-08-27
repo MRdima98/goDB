@@ -1,7 +1,11 @@
 package btree
 
 import (
+	"bytes"
+	"fmt"
+	"io"
 	"math/rand"
+	"os"
 	"slices"
 	"testing"
 )
@@ -151,6 +155,17 @@ func TestRootSplitByChildrenOverflow(t *testing.T) {
 	}
 }
 
+func TestRootPrint(t *testing.T) {
+	noChildren := 10
+	tree, exp := genTree(noChildren)
+	got := readTreeStdout(printTree, tree)
+	expected := readStdout(exp)
+	if got != expected {
+		t.Errorf(`I should've printed %v,
+			but I printed %v instead `, expected, got)
+	}
+}
+
 func genTree(nodes_num int) (bTree, []int) {
 	tree := &bTree{}
 	expected := []int{}
@@ -163,4 +178,45 @@ func genTree(nodes_num int) (bTree, []int) {
 	slices.Sort(expected)
 
 	return *tree, expected
+}
+
+func readTreeStdout(myPrint func(bTree), tree bTree) string {
+	// ????
+	noIdea := os.Stdout
+
+	// This connects the buffer with my stuff ???
+	r, w, err := os.Pipe()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	os.Stdout = w
+	myPrint(tree)
+	w.Close()
+
+	var buf bytes.Buffer
+	io.Copy(&buf, r)
+	// This flushes the buffer otherwise I will keep eating it
+	os.Stdout = noIdea
+
+	return buf.String()
+}
+
+func readStdout(arr []int) string {
+	noIdea := os.Stdout
+
+	r, w, err := os.Pipe()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	os.Stdout = w
+	fmt.Println(arr, len(arr))
+	w.Close()
+
+	var buf bytes.Buffer
+	io.Copy(&buf, r)
+	os.Stdout = noIdea
+
+	return buf.String()
 }

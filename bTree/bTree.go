@@ -13,6 +13,7 @@ type bTree struct {
 	children []*bTree
 }
 
+// Inserts indexes and keeps the tree in order
 func (r *bTree) insertIndex(index int) error {
 	if len(r.children) == 0 {
 		if len(r.indexes) < maxKeysPerNode {
@@ -51,13 +52,12 @@ func (r *bTree) insertIndex(index int) error {
 // to approach it
 func printTree(root bTree) {
 	fmt.Println(root.indexes, len(root.indexes))
-	for _, el := range root.children {
-		printTree(*el)
-	}
 }
 
-// TODO: This does split current children BUT I need the ability to also split
-// the childrens children! Which might be annoying
+func printHello() {
+	fmt.Println("hello")
+}
+
 func splitRoot(root *bTree, index int) *bTree {
 	root.indexes = append(root.indexes, index)
 	slices.Sort(root.indexes)
